@@ -1,7 +1,7 @@
 # Installation instructions
-These are instructions for installing Arch Linux on an encrypted system 
-(using LVM on LUKS) using UEFI. The main references for these instructions
-are
+These are instructions for installing Arch Linux on an encrypted (LVM on LUKS) system 
+using UEFI. These instructions assume the system will be installed on a single disk.
+The main references for these instructions are
 
 * [Arch Linux official installation guide](https://wiki.archlinux.org/title/installation_guide)
 * [Arch Linux dm-crypt guide](https://wiki.archlinux.org/title/Dm-crypt/Encrypting_an_entire_system)
@@ -78,23 +78,23 @@ List available network devices using
 [iwd]# device list
 ```
 
-In the steps below, replace *device* with the name of the network
-interface you wish to use. Scan for available networks via
+In the steps below, replace DEVICE with the name of the network
+device you wish to use. Scan for available networks via
 
 ```{bash}
-[iwd]# station *device* scan
+[iwd]# station DEVICE scan
 ```
 
 then list these networks using
 
 ```{bash}
-[iwd]# station *device* get-networks
+[iwd]# station DEVICE get-networks
 ```
 
 Connect to the network by
 
 ```{bash}
-[iwd]# station *device* connect *SSID*
+[iwd]# station DEVICE connect SSID
 ```
 
 If the network requires a passphrase, you will be prompted for it. 
@@ -106,3 +106,80 @@ connection to the network.
 ```
 
 ### Update the system clock
+Use the following command to ensure the system clock is accurate
+
+```{bash}
+# timedatectl set-ntp true
+```
+
+Verify the correct date and time using `timedatectl status`. 
+
+### Set-up full system encryption
+The next step is to setup full system encryption. Identify the disk
+you want to encrypt and install the system to using 
+
+```{bash}
+# fdisk -l
+```
+
+Then use `fdisk /dev/sdx`, where `/dev/sdx` is the block device of
+the desired disk, to create two partitions:
+
+1. A 512MB boot partition of type `EFI System` (type code `1`). This
+will be refered to as `/dev/sdx1`.
+2. A partition taking up the remaining disk space. This will be the 
+encrypted partition. and will be refered to as `/dev/sdx2`.
+
+Create the LUKS encrypted container on the second partition using
+
+```{bash}
+# cryptsetup luksFormat /dev/sdx2
+```
+
+then open the container by
+
+```{bash}
+# cryptsetup open /dev/sdx2 cryptlvm
+```
+
+Create a physical volume on top of the of the container:
+
+```{bash}
+# pvcreate /dev/mapper/cryptlvm
+```
+
+Create a volume group and add the previously created physical volume
+to it:
+
+```{bash}
+# vgcreate cryptlvm-vg /dev/mapper/cryptlvm
+```
+
+Create the following logical volumes within this volume group:
+
+```{bash}
+# lvcreate -L 8G cryptlvm-vg -n swap
+# lvcreate -L 64G cryptlvm-vg -n root
+# lvcreate -l 100%FREE cryptlvm-vg -n home
+```
+
+Format the filesystems on each volume as well as the boot partition:
+
+```{bash}
+# mkfs.ext4 /dev/cryptlvm-vg/root
+# mkfs.ext4 /dev/cryptlvm-vg/home
+# mkswap /dev/cryptlvm-vg/swap
+# mkfs.fat -F 32 /dev/sdx1
+```
+
+Mount the partitions and enable the swap partition:
+
+```{bash}
+# mount /dev/cryptlvm-vg/root /mnt
+# mkdir /mnt/home
+# mount /dev/cryptlvm-vg/home /mnt/home
+# swapon /dev/cryptlvm-vg/swap
+# mkdir /mnt/boot
+# mount /dev/sdx1 /mnt/boot
+```
+
