@@ -187,7 +187,7 @@ Mount the partitions and enable the swap partition:
 Use `pacstrap` to install essential packages to the system.
 
 ```{bash}
-# pacstrap /mnt base base-devel linux linux-firmware git lvm2 vim nano sudo intel-ucode
+# pacstrap /mnt base base-devel linux linux-firmware git lvm2 vim nano sudo networkmanager intel-ucode
 ```
 
 Change `intel-ucode` to `and-ucode` on an AMD system.
@@ -252,7 +252,12 @@ Create the hostname file
 # touch /etc/hostname
 ```
 
-and add a single line to this file defining the hostname of the system.
+and add a single line to this file defining the hostname of the system. Enable
+the `NetworkManager` service:
+
+```{bash}
+# systemctl enable NetworkManager.service
+```
 
 ### Initramfs
 Add the `keyboard`, `keymap`, `encrypt` and `lvm2` hooks to `/etc/mkinitcpio.conf`:
@@ -274,7 +279,7 @@ Set the root password by running `passwd`.
 Create a non-root user and give them `sudo` privileges.
 
 ```{base}
-# useradd -m -g users -G wheel myusername && passwd myusername
+# useradd -m -G wheel -s /bin/bash myusername && passwd myusername
 # visudo
 ```
 
