@@ -13,6 +13,7 @@ sudo pacman -S \
 	kde-applications \
 	sddm \
 	sddm-kcm \
+	ntp \
 	ttf-fira-code \
 	ttf-fira-sans \
 	ttf-dejavu \
@@ -70,3 +71,4 @@ done
 
 # enable services
 sudo systemctl enable sddm.service
+sudo systemctl enable ntpd.service
