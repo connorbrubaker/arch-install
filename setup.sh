@@ -1,25 +1,18 @@
 #! /bin/bash
 
 # synchronize and update system
-sudo pacman -Syu 
+echo "Updating system..."
+sleep 1s
+sudo pacman -Syu --noconfirm
+
 # install packages from official repos
-# comment out lines of packages that should not be installed
+echo "Installing packages..."
+sleep 1s
 sudo pacman -S \
-# desktop environment and display manager
-	gnome \
-	gnome-extra \
-	gdm \
-	# budgie-desktop \
-	# cinnamon \
-	# cutefish \
-	# deepin \
-	# plasma \
-	# mate \
-	# xfce4 \
-	# sddm \
-	# lightdm \
-	# lightdm-gtk-greeter \
-# fonts
+	plasma \
+	kde-applications \
+	sddm \
+	sddm-kcm \
 	ttf-fira-code \
 	ttf-fira-sans \
 	ttf-dejavu \
@@ -32,7 +25,6 @@ sudo pacman -S \
 	inter-font \
 	cantarell-fonts \
 	adobe-source-sans-fonts \
-# other applications and programs
 	discord \
 	libreoffice-still \
 	r \
@@ -43,7 +35,6 @@ sudo pacman -S \
 	grep \
 	linux-headers \
 	git \
-	code \
 	wget \
 	python \
 	texlive-most \
@@ -77,31 +68,29 @@ sudo pacman -S \
 	yarn \
 	--noconfirm
 	
+# install packages from AUR
+PackageList=(
+	"rstudio-desktop-bin"
+	"spotify"
+	"google-chrome"
+	"zoom"
+	"visual-studio-code-bin"
+)
+
+# for each package in the above list, create a directory in /tmp/aur/
+# and clone that repo into its respective folder; then enter each of
+# those directories and install the package
+rm -rf /tmp/aur/
+mkdir -p /tmp/aur/
+for package in ${PackageList[*]}; do 
+	echo "Installing ${package} from AUR..."
+	sleep 1s
+	mkdir "/tmp/aur/${package}"
+	git clone "https://aur.archlinux.org/${package}.git" "/tmp/aur/${package}"
+	cd "/tmp/aur/${package}" && makepkg -si --noconfirm 
+	echo "Finished installing ${package}"
+	echo ""
+done
+
 # enable services
-sudo systemctl enable gdm.service
-# sudo systemctl enable lightdm
-# sudo systemctl enable sddm.service
-
-# install rstudio from AUR
-mkdir -p /tmp/aur/rstudio-desktop-bin
-git clone https://aur.archlinux.org/rstudio-desktop-bin.git /tmp/aur/rstudio-desktop-bin
-cd /tmp/aur/rstudio-desktop-bin && makepkg -si --nocheck --noconfirm
-cd /home && rm -rf /tmp/aur/rstudio-desktop-bin
-
-# install spotify from AUR
-mkdir -p /tmp/aur/spotify
-git clone https://aur.archlinux.org/spotify.git /tmp/aur/spotify
-cd /tmp/aur/spotify && makepkg -si --nocheck --noconfirm
-cd /home && rm -rf /tmp/aur/spotify
-
-# install google chrome from AUR
-mkdir -p /tmp/aur/google-chrome
-git clone https://aur.archlinux.org/google-chrome.git /tmp/aur/google-chrome
-cd /tmp/aur/google-chrome && makepkg -si --nocheck --noconfirm
-cd /home && rm -rf /tmp/aur/google-chrome
-
-# install zoom from AUR
-mkdir -p /tmp/aur/zoom
-git clone https://aur.archlinux.org/zoom.git /tmp/aur/zoom
-cd /tmp/aur/zoom && makepkg -si --nocheck --noconfirm
-cd /home && rm -rf /tmp/aur/zoom
+sudo systemctl enable sddm.service
