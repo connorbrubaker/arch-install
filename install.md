@@ -187,7 +187,7 @@ Mount the partitions and enable the swap partition:
 Use `pacstrap` to install essential packages to the system.
 
 ```{bash}
-# pacstrap /mnt base base-devel linux linux-firmware git lvm2
+# pacstrap /mnt base base-devel linux linux-firmware git lvm2 nano
 ```
 
 ## Post-installation
@@ -287,4 +287,21 @@ In order to unlock the encrypted root partition at boot, edit `/etc/default/grub
 GRUB_CMDLINE_LINUX="cryptdevice=UUID=device-UUID:cryptlvm root=/dev/cryptlvm-vg/root"
 ```
 
-where `device-UUID` should be replaced with the UUID 
+where `device-UUID` should be replaced with the UUID in the output of
+
+```{base}
+# blkid | grep /dev/sdx2
+```
+
+Now make the `grub` configuration.
+
+```{base}
+# grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+## Reboot the system
+Reboot the system and remove the USB installation media.
+
+```{bash}
+# reboot
+```
