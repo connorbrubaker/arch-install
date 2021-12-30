@@ -187,7 +187,7 @@ Mount the partitions and enable the swap partition:
 Use `pacstrap` to install essential packages to the system.
 
 ```{bash}
-# pacstrap /mnt base base-devel linux linux-firmware git lvm2 nano intel-ucode
+# pacstrap /mnt base base-devel linux linux-firmware git lvm2 vim nano sudo intel-ucode
 ```
 
 Change `intel-ucode` to `and-ucode` on an AMD system.
@@ -274,8 +274,7 @@ Set the root password by running `passwd`.
 Create a non-root user and give them `sudo` privileges.
 
 ```{base}
-# useradd -m -g users -G wheel -s myusername
-# passwd myusername
+# useradd -m -g users -G wheel myusername && passwd myusername
 # visudo
 ```
 
