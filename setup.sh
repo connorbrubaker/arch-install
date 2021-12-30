@@ -41,31 +41,6 @@ sudo pacman -S \
 	gnome-latex \
 	texstudio \
 	shotwell \
-	ant \
-	boost-libs \
-	qt5-sensors \
-	qt5-svg \
-	qt5-webengine \
-	qt5-xmlpatterns \
-	postgresql-libs \
-	sqlite3 \
-	soci \
-	clang \
-	hunspell-en_US \
-	mathjax2 \
-	pandoc \
-	yaml-cpp \
-	boost \
-	desktop-file-utils \
-	jdk8-openjdk \
-	apache-ant \
-	unzip \
-	openssl \
-	libcups \
-	pam \
-	patchelf \
-	wget \
-	yarn \
 	--noconfirm
 	
 # install packages from AUR
@@ -87,7 +62,8 @@ for package in ${PackageList[*]}; do
 	sleep 1s
 	mkdir "/tmp/aur/${package}"
 	git clone "https://aur.archlinux.org/${package}.git" "/tmp/aur/${package}"
-	cd "/tmp/aur/${package}" && makepkg -si --noconfirm 
+	cd "/tmp/aur/${package}" && makepkg -rsi --noconfirm 
+	cd /tmp/aur && rm -rf "/tmp/aur/${package}"
 	echo "Finished installing ${package}"
 	echo ""
 done
