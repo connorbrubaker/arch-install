@@ -187,7 +187,7 @@ Mount the partitions and enable the swap partition:
 Use `pacstrap` to install essential packages to the system.
 
 ```{bash}
-# pacstrap /mnt base base-devel linux linux-firmware git lvm2 vim nano sudo networkmanager intel-ucode
+# pacstrap /mnt base base-devel linux linux-firmware git lvm2 vim nano sudo networkmanager intel-ucode util-linux
 ```
 
 Change `intel-ucode` to `and-ucode` on an AMD system.

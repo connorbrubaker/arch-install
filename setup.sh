@@ -76,6 +76,7 @@ sudo systemctl enable sddm.service
 sudo systemctl enable ntpd.service
 sudo systemctl enable cups.service
 sudo systemctl enable nftables.service
+sudo systemctl enable fstrim.timer
 
 # reboot
 sudo reboot
