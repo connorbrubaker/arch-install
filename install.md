@@ -187,8 +187,10 @@ Mount the partitions and enable the swap partition:
 Use `pacstrap` to install essential packages to the system.
 
 ```{bash}
-# pacstrap /mnt base base-devel linux linux-firmware git lvm2 nano
+# pacstrap /mnt base base-devel linux linux-firmware git lvm2 nano intel-ucode
 ```
+
+Change `intel-ucode` to `and-ucode` on an AMD system.
 
 ## Post-installation
 Once the packages from the previous step have been downloaded
@@ -267,6 +269,17 @@ Also add `ext4` to `MODULES`. Recreate the initramfs image via
 
 ### Set root password
 Set the root password by running `passwd`.
+
+### Add non-root user and configure for sudo
+Create a non-root user and give them `sudo` privileges.
+
+```{base}
+# useradd -m -g users -G wheel -s myusername
+# passwd myusername
+# visudo
+```
+
+Uncomment the line `%wheel ALL=(ALL) ALL`. 
 
 ### Install a bootloader
 Install the required packages using `pacman`:
