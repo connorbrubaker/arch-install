@@ -183,3 +183,108 @@ Mount the partitions and enable the swap partition:
 # mount /dev/sdx1 /mnt/boot
 ```
 
+## Installation
+Use `pacstrap` to install essential packages to the system.
+
+```{bash}
+# pacstrap /mnt base base-devel linux linux-firmware git lvm2
+```
+
+## Post-installation
+Once the packages from the previous step have been downloaded
+and installed, complete the following steps to configure the 
+system.
+
+### Generate `fstab`
+The `fstab` file is used to define how disk partitions, other block
+devices, and/or remote file systems should be mounted into the 
+local file system. Generate this file via
+
+```{bash}
+# genfstab -U /mnt >> /mnt/etc/fstab
+```
+
+To complete the following steps, change root into the new system:
+
+```{bash}
+# arch-chroot /mnt
+```
+
+### Set the time zone
+Set the time zone via
+
+```{bash}
+# ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
+```
+
+and generate `/etc/adjtime` via
+
+```{bash}
+# hwclock --systohc
+```
+
+### Localization
+Edit `/etc/locale.gen` and uncomment `en_US.UTF-8 UTF-8` and other 
+needed locales. Generate the locales by running:
+
+```{bash}
+# locale-gen
+```
+
+Create the `locale.conf(5)` file,
+
+```{bash}
+# touch /etc/locale.conf
+```
+
+and add the single line below to this file:
+
+```{bash}
+LANG=en_US.UTF-8
+```
+
+### Network configuration
+Create the hostname file
+
+```{bash}
+# touch /etc/hostname
+```
+
+and add a single line to this file defining the hostname of the system.
+
+### Initramfs
+Add the `keyboard`, `keymap`, `encrypt` and `lvm2` hooks to `/etc/mkinitcpio.conf`:
+
+```
+HOOKS=(base udev autodetect keyboard keymap consolefont modconf block encrypt lvm2 filesystems fsck)
+```
+
+Also add `ext4` to `MODULES`. Recreate the initramfs image via
+
+```{bash}
+# mkinitcpio -p linux
+```
+
+### Set root password
+Set the root password by running `passwd`.
+
+### Install a bootloader
+Install the required packages using `pacman`:
+
+```{bash}
+# pacman -S grub efibootmgr
+```
+
+Install the bootloader:
+
+```{bash}
+# grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub_uefi --recheck
+```
+
+In order to unlock the encrypted root partition at boot, edit `/etc/default/grub`:
+
+```
+GRUB_CMDLINE_LINUX="cryptdevice=UUID=device-UUID:cryptlvm root=/dev/cryptlvm-vg/root"
+```
+
+where `device-UUID` should be replaced with the UUID 
