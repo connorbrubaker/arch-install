@@ -11,6 +11,7 @@ sudo pacman -S \
 	gdm \
 	# budgie-desktop \
 	# cinnamon \
+	# cutefish \
 	# deepin \
 	# plasma \
 	# mate \
