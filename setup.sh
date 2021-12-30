@@ -17,6 +17,7 @@ sudo pacman -S \
 	# xfce4 \
 	# sddm \
 	# lightdm \
+	# lightdm-gtk-greeter \
 # fonts
 	ttf-fira-code \
 	ttf-fira-sans \
@@ -77,6 +78,8 @@ sudo pacman -S \
 	
 # enable services
 sudo systemctl enable gdm.service
+# sudo systemctl enable lightdm
+# sudo systemctl enable sddm.service
 
 # install rstudio from AUR
 mkdir -p /tmp/aur/rstudio-desktop-bin
