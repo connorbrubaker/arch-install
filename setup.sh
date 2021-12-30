@@ -14,6 +14,7 @@ sudo pacman -S \
 	sddm \
 	sddm-kcm \
 	ntp \
+	cups \
 	ttf-fira-code \
 	ttf-fira-sans \
 	ttf-dejavu \
@@ -72,3 +73,7 @@ done
 # enable services
 sudo systemctl enable sddm.service
 sudo systemctl enable ntpd.service
+sudo systemctl enable cups.service
+
+# reboot
+sudo reboot
