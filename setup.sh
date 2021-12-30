@@ -15,6 +15,7 @@ sudo pacman -S \
 	sddm-kcm \
 	ntp \
 	cups \
+	nftables \
 	ttf-fira-code \
 	ttf-fira-sans \
 	ttf-dejavu \
@@ -74,6 +75,7 @@ done
 sudo systemctl enable sddm.service
 sudo systemctl enable ntpd.service
 sudo systemctl enable cups.service
+sudo systemctl enable nftables.service
 
 # reboot
 sudo reboot
