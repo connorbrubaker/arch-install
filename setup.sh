@@ -44,6 +44,7 @@ sudo pacman -S \
 	gnome-latex \
 	texstudio \
 	shotwell \
+	transmission-qt \
 	--noconfirm
 	
 # install packages from AUR
@@ -53,6 +54,8 @@ PackageList=(
 	"google-chrome"
 	"zoom"
 	"visual-studio-code-bin"
+	"sublime-text-4"
+	"1password"
 )
 
 # for each package in the above list, create a directory in /tmp/aur/
