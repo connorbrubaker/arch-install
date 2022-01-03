@@ -249,7 +249,7 @@ LANG=en_US.UTF-8
 Create the hostname file
 
 ```{bash}
-# touch /etc/hostname
+# nano /etc/hostname
 ```
 
 and add a single line to this file defining the hostname of the system. Enable
