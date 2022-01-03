@@ -279,7 +279,7 @@ Set the root password by running `passwd`.
 Create a non-root user and give them `sudo` privileges.
 
 ```{base}
-# useradd -m -G wheel -s /bin/bash myusername && passwd myusername
+# useradd -m -G wheel -s /bin/zsh myusername && passwd myusername
 # EDITOR=nano visudo
 ```
 
