@@ -9,10 +9,8 @@ sudo pacman -Syu --noconfirm
 echo "Installing packages..."
 sleep 1s
 sudo pacman -S \
-	plasma \
-	kde-applications \
-	sddm \
-	sddm-kcm \
+	gnome \
+	gdm \
 	ntp \
 	cups \
 	nftables \
@@ -56,6 +54,8 @@ PackageList=(
 	"visual-studio-code-bin"
 	"sublime-text-4"
 	"1password"
+	"newaita-icons-git"
+	"adwaita-dark"
 )
 
 # for each package in the above list, create a directory in /tmp/aur/
