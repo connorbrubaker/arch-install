@@ -301,7 +301,7 @@ Install the bootloader:
 In order to unlock the encrypted root partition at boot, edit `/etc/default/grub`:
 
 ```
-GRUB_CMDLINE_LINUX="cryptdevice=UUID=device-UUID:cryptlvm root=/dev/cryptlvm-vg/root"
+GRUB_CMDLINE_LINUX="cryptdevice=UUID=device-UUID:cryptlvm root=/dev/cryptlvmvg/root"
 ```
 
 where `device-UUID` should be replaced with the UUID in the output of
