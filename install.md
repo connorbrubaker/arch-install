@@ -152,33 +152,33 @@ Create a volume group and add the previously created physical volume
 to it:
 
 ```{bash}
-# vgcreate cryptlvm-vg /dev/mapper/cryptlvm
+# vgcreate cryptlvmvg /dev/mapper/cryptlvm
 ```
 
 Create the following logical volumes within this volume group:
 
 ```{bash}
-# lvcreate -L 8G cryptlvm-vg -n swap
-# lvcreate -L 64G cryptlvm-vg -n root
-# lvcreate -l 100%FREE cryptlvm-vg -n home
+# lvcreate -L 8G cryptlvmvg -n swap
+# lvcreate -L 64G cryptlvmvg -n root
+# lvcreate -l 100%FREE cryptlvmvg -n home
 ```
 
 Format the filesystems on each volume as well as the boot partition:
 
 ```{bash}
-# mkfs.ext4 /dev/cryptlvm-vg/root
-# mkfs.ext4 /dev/cryptlvm-vg/home
-# mkswap /dev/cryptlvm-vg/swap
+# mkfs.ext4 /dev/cryptlvmvg/root
+# mkfs.ext4 /dev/cryptlvmvg/home
+# mkswap /dev/cryptlvmvg/swap
 # mkfs.fat -F 32 /dev/sdx1
 ```
 
 Mount the partitions and enable the swap partition:
 
 ```{bash}
-# mount /dev/cryptlvm-vg/root /mnt
+# mount /dev/cryptlvmvg/root /mnt
 # mkdir /mnt/home
-# mount /dev/cryptlvm-vg/home /mnt/home
-# swapon /dev/cryptlvm-vg/swap
+# mount /dev/cryptlvmvg/home /mnt/home
+# swapon /dev/cryptlvmvg/swap
 # mkdir /mnt/boot
 # mount /dev/sdx1 /mnt/boot
 ```
@@ -187,7 +187,7 @@ Mount the partitions and enable the swap partition:
 Use `pacstrap` to install essential packages to the system.
 
 ```{bash}
-# pacstrap /mnt base base-devel linux linux-firmware git lvm2 vim nano sudo networkmanager intel-ucode util-linux
+# pacstrap /mnt base base-devel linux linux-firmware lvm2 networkmanager intel-ucode util-linux nano sudo git zsh
 ```
 
 Change `intel-ucode` to `and-ucode` on an AMD system.
@@ -236,7 +236,7 @@ needed locales. Generate the locales by running:
 Create the `locale.conf(5)` file,
 
 ```{bash}
-# touch /etc/locale.conf
+# nano /etc/locale.conf
 ```
 
 and add the single line below to this file:
@@ -263,7 +263,7 @@ the `NetworkManager` service:
 Add the `keyboard`, `keymap`, `encrypt` and `lvm2` hooks to `/etc/mkinitcpio.conf`:
 
 ```
-HOOKS=(base udev autodetect keyboard keymap consolefont modconf block encrypt lvm2 filesystems fsck)
+HOOKS=(base udev autodetect keyboard keymap modconf block encrypt lvm2 filesystems fsck)
 ```
 
 Also add `ext4` to `MODULES`. Recreate the initramfs image via
@@ -280,7 +280,7 @@ Create a non-root user and give them `sudo` privileges.
 
 ```{base}
 # useradd -m -G wheel -s /bin/bash myusername && passwd myusername
-# visudo
+# EDITOR=nano visudo
 ```
 
 Uncomment the line `%wheel ALL=(ALL) ALL`. 
@@ -306,19 +306,34 @@ GRUB_CMDLINE_LINUX="cryptdevice=UUID=device-UUID:cryptlvm root=/dev/cryptlvm-vg/
 
 where `device-UUID` should be replaced with the UUID in the output of
 
-```{base}
+```{bash}
 # blkid | grep /dev/sdx2
 ```
 
-Now make the `grub` configuration.
+To make this easier, copy the UUID to a file and copy it to `/etc/default/grub`:
 
-```{base}
+```{bash}
+# blkid | grep /dev/sdx2 >> /tmp/uuid
+```
+
+To copy the UUID to `/etc/default/grub`, execute the following:
+
+1. `nano -F /tmp/uuid`
+2. Enter `CTRL+6` to start the selection at `UUID=...` and select the desired text with the left arrow key.
+3. Enter `ESC+6` to copy the selection into the cut buffer.
+4. Enter `CTRL+R` then `ESC+F` and type `/etc/default/grub` and hit Enter.
+5. Enter `CTRL+U` to paste the UUID.
+
+Save and close the file. Now remake the `grub` configuration.
+
+```{bash}
 # grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
 ## Reboot the system
-Reboot the system and remove the USB installation media.
+Exit `chroot` and reboot the system; remove the USB installation media.
 
 ```{bash}
+# exit
 # reboot
 ```
